@@ -4,4 +4,4 @@ By Asher Childress + Noah Nottingham for AHS' FTC 2023-2024 Challenge, Plus Othe
 
 Note: 2022-23 is old code for reference
 
-Open road-runner-quickstart/teamcode/src/java/Main to find our code.
+Open road-runner-quickstart\TeamCode\src\main\java\org\firstinspires\ftc\teamcode\Main to find our code.
