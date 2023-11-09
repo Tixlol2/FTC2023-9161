@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode;
 
 import androidx.annotation.NonNull;
 
+// You imported the entire package on line 10, no need for others
+
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
@@ -39,6 +41,8 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
+// Same thing but you have to add it.
+// import java.util.*;
 import java.lang.Math;
 import java.util.Arrays;
 import java.util.LinkedList;
