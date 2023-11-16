@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class hardware {
     OpMode opMode;
 
-    public DcMotor frontLeft, frontRight, backRight, backLeft;
+    public DcMotor frontLeft, frontRight, backRight, backLeft, arm1, arm2;
     public DcMotor[] Drive;
 
     public void init_robot(OpMode opMode) {
