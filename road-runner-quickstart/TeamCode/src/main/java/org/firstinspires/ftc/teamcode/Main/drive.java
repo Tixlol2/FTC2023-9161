@@ -71,7 +71,7 @@ public class drive extends OpMode {
         //////////////////////////
 
         //REV HD Motor outputs 28 ticks per rotation before gearbox.
-
+        // will wheel motors be put through gear ratio? or just conveyer
         
     }
 }
