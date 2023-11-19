@@ -1,7 +1,0 @@
-org.firstinspires.ftc.teamcode.test.TeamCode-androidTest-0 C:\Programming\Robotics\FTC2023-9161\road-runner-quickstart\TeamCode\build\generated\res\resValues\androidTest\debug
-org.firstinspires.ftc.teamcode.test.TeamCode-androidTest-1 C:\Programming\Robotics\FTC2023-9161\road-runner-quickstart\TeamCode\build\generated\res\rs\androidTest\debug
-org.firstinspires.ftc.teamcode.test.TeamCode-mergeDebugAndroidTestResources-2 C:\Programming\Robotics\FTC2023-9161\road-runner-quickstart\TeamCode\build\intermediates\incremental\debugAndroidTest\mergeDebugAndroidTestResources\merged.dir
-org.firstinspires.ftc.teamcode.test.TeamCode-mergeDebugAndroidTestResources-3 C:\Programming\Robotics\FTC2023-9161\road-runner-quickstart\TeamCode\build\intermediates\incremental\debugAndroidTest\mergeDebugAndroidTestResources\stripped.dir
-org.firstinspires.ftc.teamcode.test.TeamCode-merged_res-4 C:\Programming\Robotics\FTC2023-9161\road-runner-quickstart\TeamCode\build\intermediates\merged_res\debugAndroidTest
-org.firstinspires.ftc.teamcode.test.TeamCode-androidTest-5 C:\Programming\Robotics\FTC2023-9161\road-runner-quickstart\TeamCode\src\androidTest\res
-org.firstinspires.ftc.teamcode.test.TeamCode-androidTestDebug-6 C:\Programming\Robotics\FTC2023-9161\road-runner-quickstart\TeamCode\src\androidTestDebug\res
