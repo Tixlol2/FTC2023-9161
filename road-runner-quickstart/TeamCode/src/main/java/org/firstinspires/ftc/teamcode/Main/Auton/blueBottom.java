@@ -4,6 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.teamcode.Main.HardAuto;
+
 
 @Autonomous(name = "blueBottom", group = "Auto")
 public class blueBottom extends LinearOpMode {
@@ -43,21 +45,6 @@ public class blueBottom extends LinearOpMode {
     }
 
 
-    public void run(double power, int time){
 
-        frontLeft.setPower(power);
-        frontRight.setPower(power);
-        backLeft.setPower(power);
-        backRight.setPower(power);
-
-        sleep(time);
-
-        frontLeft.setPower(0);
-        frontRight.setPower(0);
-        backLeft.setPower(0);
-        backRight.setPower(0);
-
-
-    }
 
 }
