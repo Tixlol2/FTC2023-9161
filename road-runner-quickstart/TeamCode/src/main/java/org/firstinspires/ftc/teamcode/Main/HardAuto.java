@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Main;
 
+
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 public class HardAuto extends hardware {
