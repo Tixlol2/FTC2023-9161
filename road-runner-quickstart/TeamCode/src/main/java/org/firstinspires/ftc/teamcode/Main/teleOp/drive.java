@@ -57,8 +57,8 @@ public class drive extends OpMode {
         double v2 = velocity * Math.sin(angle + (Math.PI / 4));
         double power1 = v1 + rotation;
         double power2 = v2 + rotation;
-        double power3 = v2 + rotation;
-        double power4 = v1 + rotation;
+        double power3 = v2 - rotation;
+        double power4 = v1 - rotation;
 
         r.frontLeft.setPower(-(power1 * deflator));
         r.frontRight.setPower(-(power2 * deflator));
