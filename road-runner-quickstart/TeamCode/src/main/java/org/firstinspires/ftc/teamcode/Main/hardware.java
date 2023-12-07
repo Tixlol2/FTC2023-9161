@@ -6,14 +6,12 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-
-
 public class hardware {
     OpMode opMode;
 
     public DcMotor frontLeft, frontRight, backRight, backLeft, arm1, arm2;
     public DcMotor[] Drive;
+  
 
     public void init_robot(OpMode opMode) {
         this.opMode = opMode;
@@ -23,28 +21,84 @@ public class hardware {
 
     public void init_hardware() {
 
-
-
-
         frontLeft = opMode.hardwareMap.dcMotor.get("FLM");
         frontRight = opMode.hardwareMap.dcMotor.get("FRM");
         backLeft = opMode.hardwareMap.dcMotor.get("BLM");
         backRight = opMode.hardwareMap.dcMotor.get("BRM");
 
-        //Remove if error, I am testing to see if motor's work better with float or brake ZP
-        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-
-
-
         Drive = new DcMotor[]{frontLeft, backLeft, frontRight, backRight};
         for (DcMotor motor: Drive){
             motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
+
         opMode.telemetry.update();
     }
 
+    public class pidController {
+        double p;
+        double i;
+        double d;
 
+        //memory variables
+        float integrator, differentiator, preErr, preMeasurement;
+
+        //Output limits
+        float limMax = 0.9,limMin = 0.9; //Don't change, this is set to the motors' max input value
+
+        //sample time
+        float T;
+
+        //controller output
+        double out;
+
+        
+        pidController(double p, double i, double d) {
+            this.p = p;
+            this.i = i;
+            this.d = d;
+        }
+
+        public double pidUpdate(float setpoint, float measurement) {
+
+            //calculating error
+            float error = setpoint - measurement;
+
+            //proportional
+            float proportional = p*error;
+
+            //integral
+            integrator += 0.5 * i * T * (error+preErr);
+
+            //integral limits
+            float limMaxInt,limMinInt;
+            //computing the integral limits
+            if (limMax > proportional) {
+                limMaxInt = limMax - proportional;
+            } else limMaxInt = 0;
+
+            if (limMin < proportional) { 
+                limMinInt = limMin - proportional;
+            } else limMinInt = 0;
+            //clamping integral
+            if (integrator > limMaxInt) integrator = limMaxInt;
+            else if (integrator < limMinInt) integrator = limMinInt;
+
+            //derivative
+            differentiator = -(2 * d * (measurement - preMeasurement)) + (-1*T*differentiator) / T;
+
+            //output with applied limits
+            out = (double) ((proportional + differentiator + integrator)/1000); //I put 1000 for now to convert ticks into a value that is applicable to the double that is required by the motors
+
+            if (out > limMax) out = limMax;
+            else if (out < limMin) out = limMin;
+
+            //store error and measurement for use in next iteration
+            preErr = Error;
+            preMeasurement = measurement;
+
+            //Return controller output
+            return out;
+        }
+
+    }
 }

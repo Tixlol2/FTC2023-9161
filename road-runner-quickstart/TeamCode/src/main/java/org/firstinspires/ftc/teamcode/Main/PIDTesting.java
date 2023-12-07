@@ -5,20 +5,22 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @config
 @TeleOp
-public class testing extends OpMode{
+public class PIDtesting extends OpMode{
 
-
-    private PIDController controller;
+    hardware r = new hardware();
+    private pidController controller;
+    //private PIDController controller;
 
     public static double p = 0, i = 0, d = 0;
-    public static double f = 0;
+    //public static double f = 0;
 
-    private final double ticks_in_degree = 4096 / 360; //Axon Odometry pods measure 4096 ticks per revolution
+    private final double ticks_in_degree = 1;// don't really know yet
+    //private final double ticks_in_degree = 4096 / 360; //Axon Odometry pods measure 4096 ticks per revolution
 
     private DcMotorEx frontLeft;
     @Override
     public void init() {
-        controller = new PIDController(p,i,d);
+        controller = new pidController(p,i,d);
         telemetry = new MultipleTelemetry(telemetry, FTCDashboard.getInstance(),getTelemetry());
 
             frontLeft = hardwareMap.get(DcMotorEx.class, "FLM");
@@ -26,12 +28,12 @@ public class testing extends OpMode{
 
     @Override
     public void loop() {
-        controller.setPID(p,i,d);
+        //controller.setPID(p,i,d);
         int motorPos = frontLeft.getCurrentPosistion();
-        double pid = controller.calculate(motorPos, target);
-        double ff = Math.cos(Math.toRadian(target/ticks_in_degree)) * f;
+        double pid = controller.pidUpdate(motorPos,target);//controller.calculate(motorPos, target);
+        //double ff = Math.cos(Math.toRadian(target/ticks_in_degree)) * f;
 
-        double power = pid + ff;
+        double power = pid;//+ ff;
 
         frontLeft.setPower(power);
 
