@@ -1,17 +1,26 @@
 package org.firstinspires.ftc.teamcode.Main;
 
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.FtcDashboard;
 
-@config
+
+@Config
 @TeleOp
-public class PIDtesting extends OpMode{
+public class PIDTesting extends OpMode{
+
+    public float target = 0;
 
     hardware r = new hardware();
-    private pidController controller;
+
+    FtcDashboard dash = FtcDashboard.getInstance();
+    private hardware.pidController controller;
     //private PIDController controller;
 
-    public static double p = 0, i = 0, d = 0;
+    public static float p = 0, i = 0, d = 0;
     //public static double f = 0;
 
     private final double ticks_in_degree = 1;// don't really know yet
@@ -20,8 +29,8 @@ public class PIDtesting extends OpMode{
     private DcMotorEx frontLeft;
     @Override
     public void init() {
-        controller = new pidController(p,i,d);
-        telemetry = new MultipleTelemetry(telemetry, FTCDashboard.getInstance(),getTelemetry());
+        controller = new hardware.pidController(p,i,d);
+        telemetry = new MultipleTelemetry(telemetry, dash.getTelemetry());
 
             frontLeft = hardwareMap.get(DcMotorEx.class, "FLM");
     }
@@ -29,7 +38,7 @@ public class PIDtesting extends OpMode{
     @Override
     public void loop() {
         //controller.setPID(p,i,d);
-        int motorPos = frontLeft.getCurrentPosistion();
+        int motorPos = frontLeft.getCurrentPosition();
         double pid = controller.pidUpdate(motorPos,target);//controller.calculate(motorPos, target);
         //double ff = Math.cos(Math.toRadian(target/ticks_in_degree)) * f;
 
@@ -40,5 +49,8 @@ public class PIDtesting extends OpMode{
         telemetry.addData("pos", motorPos);
         telemetry.addData("target", target);
         telemetry.update();
+
+
+
     }
 }

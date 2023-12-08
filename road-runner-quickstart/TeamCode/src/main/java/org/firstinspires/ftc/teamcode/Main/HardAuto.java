@@ -2,9 +2,15 @@ package org.firstinspires.ftc.teamcode.Main;
 
 
 
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 public class HardAuto extends hardware {
+
+    @Override
+    public void init_robot(OpMode opMode) {
+        super.init_robot(opMode);
+    }
 
     //enums for directions, you can use switch and then case FORWARD : . . . etc.
     public enum direction {

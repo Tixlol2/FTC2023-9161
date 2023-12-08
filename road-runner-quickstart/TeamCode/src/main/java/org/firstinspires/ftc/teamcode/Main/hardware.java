@@ -34,7 +34,7 @@ public class hardware {
         opMode.telemetry.update();
     }
 
-    public class pidController {
+    public static class pidController {
         double p;
         double i;
         double d;
@@ -43,7 +43,7 @@ public class hardware {
         float integrator, differentiator, preErr, preMeasurement;
 
         //Output limits
-        float limMax = 0.9,limMin = 0.9; //Don't change, this is set to the motors' max input value
+        float limMax = 0.9f,limMin = 0.9f; //Don't change, this is set to the motors' max input value
 
         //sample time
         float T;
@@ -52,7 +52,7 @@ public class hardware {
         double out;
 
         
-        pidController(double p, double i, double d) {
+        pidController(float p, float i, float d) {
             this.p = p;
             this.i = i;
             this.d = d;
@@ -64,7 +64,7 @@ public class hardware {
             float error = setpoint - measurement;
 
             //proportional
-            float proportional = p*error;
+            float proportional = (float) (p*error);
 
             //integral
             integrator += 0.5 * i * T * (error+preErr);
@@ -84,7 +84,7 @@ public class hardware {
             else if (integrator < limMinInt) integrator = limMinInt;
 
             //derivative
-            differentiator = -(2 * d * (measurement - preMeasurement)) + (-1*T*differentiator) / T;
+            differentiator = (float) (-(2 * d * (measurement - preMeasurement)) + (-1*T*differentiator) / T);
 
             //output with applied limits
             out = (double) ((proportional + differentiator + integrator)/1000); //I put 1000 for now to convert ticks into a value that is applicable to the double that is required by the motors
@@ -93,7 +93,7 @@ public class hardware {
             else if (out < limMin) out = limMin;
 
             //store error and measurement for use in next iteration
-            preErr = Error;
+            preErr = error;
             preMeasurement = measurement;
 
             //Return controller output
