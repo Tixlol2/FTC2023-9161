@@ -15,11 +15,16 @@ public class blueTop extends LinearOpMode {
     HardAuto r = new HardAuto();
 
 
+    //We have to add an init robot probably
+    
+
     DcMotor frontLeft, frontRight, backLeft, backRight;
 
 
     @Override
     public void runOpMode() throws InterruptedException {
+
+
 
         frontLeft = hardwareMap.get(DcMotor.class, "FLM");
         frontRight = hardwareMap.get(DcMotor.class, "FRM");
