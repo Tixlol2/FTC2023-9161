@@ -4,8 +4,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.teamcode.Main.HardAuto;
-
 
 @Autonomous(name = "blueBottom", group = "Auto")
 public class blueBottom extends LinearOpMode {
@@ -40,9 +38,9 @@ public class blueBottom extends LinearOpMode {
         //total distance = speed * time
         //results in 500
         //500 what???
-        r.moveIn(.25, HardAuto.direction.RIGHT, .5);
+        r.moveInEncoder(.25, HardAuto.direction.RIGHT, .5);
         sleep(25);
-        r.moveIn(35, HardAuto.direction.FORWARD, .5);
+        r.moveInEncoder(35, HardAuto.direction.FORWARD, .5);
 
     }
 

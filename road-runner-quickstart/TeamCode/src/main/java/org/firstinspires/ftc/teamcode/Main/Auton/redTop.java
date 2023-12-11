@@ -4,8 +4,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.teamcode.Main.HardAuto;
-
 
 @Autonomous(name = "redTop", group = "Auto")
 public class redTop extends LinearOpMode {
@@ -41,9 +39,9 @@ public class redTop extends LinearOpMode {
         //results in 500
         //500 what???
 
-        r.moveIn(.25, HardAuto.direction.RIGHT, .2);
+        r.moveInEncoder(.25, HardAuto.direction.RIGHT, .2);
         sleep(25);
-        r.moveIn(20, HardAuto.direction.FORWARD, .5);
+        r.moveInEncoder(20, HardAuto.direction.FORWARD, .5);
 
 
     }

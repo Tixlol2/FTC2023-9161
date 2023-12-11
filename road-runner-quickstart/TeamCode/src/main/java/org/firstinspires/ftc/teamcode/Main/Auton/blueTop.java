@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Main;
 
+import static java.lang.Thread.sleep;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -16,46 +18,32 @@ public class blueTop extends LinearOpMode {
 
 
     //We have to add an init robot probably
-    
+    double motorTickCount = 28;
 
-    DcMotor frontLeft, frontRight, backLeft, backRight;
+    double gearBoxMulti = 15;
+
+    double updatedMotorTickCount = motorTickCount * gearBoxMulti;
+
+    double radius = 48;
+
+    double circumference = 2 * (Math.PI) * radius;
+
+    double ticksPerInch = updatedMotorTickCount / circumference;
 
 
     @Override
     public void runOpMode() throws InterruptedException {
 
+        //Init Phase
+        r.init_robot(this);
+        waitForStart(); //End of Init Phase
 
-
-        frontLeft = hardwareMap.get(DcMotor.class, "FLM");
-        frontRight = hardwareMap.get(DcMotor.class, "FRM");
-        backLeft = hardwareMap.get(DcMotor.class, "BLM");
-        backRight = hardwareMap.get(DcMotor.class, "BRM");
-
-
-        /*
-        double diameter = 0;
-
-        double circumference = (diameter * Math.PI);
-
-        double ticksPerInch = (28/circumference);
-
-        */
-
-        //i need to go 33 inches
-
-
-        //total distance = speed * time
-        //results in 500
-        //500 what???
-        r.moveIn(.25, HardAuto.direction.LEFT, .2);
-        sleep(25);
-        r.moveIn(20, HardAuto.direction.FORWARD, .5);
-
-    }
-
-
+        r.goInches(4, HardAuto.direction.FORWARD, .2);
+        telemetry.addData("Completed Forward", r.frontLeft.getCurrentPosition());
+        sleep(20000);
+        r.goInches(4, HardAuto.direction.BACKWARD, .2);
 
 
 
     }
-
+}
