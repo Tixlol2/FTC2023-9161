@@ -38,10 +38,12 @@ public class blueTop extends LinearOpMode {
         r.init_robot(this);
         waitForStart(); //End of Init Phase
 
+
         r.goInches(4, HardAuto.direction.FORWARD, .2);
         telemetry.addData("Completed Forward", r.frontLeft.getCurrentPosition());
         sleep(20000);
         r.goInches(4, HardAuto.direction.BACKWARD, .2);
+
 
 
 

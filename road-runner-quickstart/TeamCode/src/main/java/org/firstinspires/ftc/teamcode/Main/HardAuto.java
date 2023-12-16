@@ -5,18 +5,182 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 public class HardAuto extends hardware {
 
+    final double motorTickCount = 28;
 
-    double motorTickCount = 28;
+    final double gearBoxMulti = 15;
 
-    double gearBoxMulti = 15;
+    final double updatedMotorTickCount = motorTickCount * gearBoxMulti;
 
-    double updatedMotorTickCount = motorTickCount * gearBoxMulti;
+    final double radius = 48;
+    final double circumference = 2 * (Math.PI) * radius;
 
-    double radius = 48;
-    double circumference = 2 * (Math.PI) * radius;
+    final double ticksPerInch = updatedMotorTickCount / circumference;
 
-    double ticksPerInch = updatedMotorTickCount / circumference;
+    ////////////////////
+    // Object Classes //
+    ////////////////////
 
+    public static class pidController {
+
+        double p;
+        double i;
+        double d;
+
+        //memory variables
+        float integrator, differentiator, preErr, preMeasurement;
+
+        //Output limits
+        float limMax = 0.9f,limMin = 0.9f; //Don't change, this is set to the motors' max input value
+
+        //sample time
+        float T;
+
+        //controller output
+        double out;
+
+        
+        pidController(float p, float i, float d) {
+            this.p = p;
+            this.i = i;
+            this.d = d;
+        }
+
+        public double pidUpdate(float setpoint, float measurement) {
+
+            //calculating error
+            float error = setpoint - measurement;
+
+            //proportional
+            float proportional = (float) (p*error);
+
+            //integral
+            integrator += 0.5 * i * T * (error+preErr);
+
+            //integral limits
+            float limMaxInt,limMinInt;
+            //computing the integral limits
+            if (limMax > proportional) {
+                limMaxInt = limMax - proportional;
+            } else limMaxInt = 0;
+
+            if (limMin < proportional) { 
+                limMinInt = limMin - proportional;
+            } else limMinInt = 0;
+            //clamping integral
+            if (integrator > limMaxInt) integrator = limMaxInt;
+            else if (integrator < limMinInt) integrator = limMinInt;
+
+            //derivative
+            differentiator = (float) (-(2 * d * (measurement - preMeasurement)) + (-1*T*differentiator) / T);
+
+            //output with applied limits
+            out = (double) ((proportional + differentiator + integrator)/1000); //I put 1000 for now to convert ticks into a value that is applicable to the double that is required by the motors
+
+            if (out > limMax) out = limMax;
+            else if (out < limMin) out = limMin;
+
+            //store error and measurement for use in next iteration
+            preErr = error;
+            preMeasurement = measurement;
+
+            //Return controller output
+            return out;
+        }
+
+    }
+
+    public static class motor {
+        double motorInTicks;
+        double gearMulti;
+        double motorTicks;
+        double outRadius;
+        double tickInches;
+
+        DcMotor[] motorList;
+
+        final int tickRange = 100;
+
+        motor(double motorInticks, double gearMulti, double motorTicks, double outRadius, DcMotor[] motorList) {
+            this.motorInTicks = motorInticks;
+            this.gearMulti = gearMulti;
+            this.motorTicks = motorTicks;
+            this.outRadius = outRadius;
+            this.tickInches = (motorInticks * gearMulti) / (outRadius*2*Math.PI);
+
+            this.motorList = motorList;
+
+        }
+
+        public void runTo(int ticks, double power) {
+                for (Dcmotor motor : motorList) {
+                    motor.setPower(power);
+                }
+
+                for (DcMotor motor : motorList) { 
+                    if (Math.abs(motor.getTargetPosition - motor.getCurrentPosition) < tickRange) motor.setPower(0);
+                }
+
+            }
+        
+    }
+    
+    public static class driveMotor extends motor {
+
+        public void goInches(double inches, direction dir, double power) {
+
+        int totalTicks = (int) (inches * tickInches);
+        
+
+        switch (dir) {
+            case FORWARD:
+                for (DcMotor motor: motorList) {
+                    motor.setTargetPosition(motor.getCurrentPosition + totalTicks);
+                }
+                break;
+                
+            case BACKWARD:
+                for (DcMotor motor: motorList) {
+                    motor.setTargetPosition(motor.getCurrentPosition - totalTicks);
+                }
+                break;
+
+            case LEFT:
+                for (DcMotor motor: motorList) {
+                    if (motor == frontLeft || motor == backLeft) motor.setTargetPosition(motor.getCurrentPosition - totalTicks);
+                    else motor.setTargetPosition(motor.getCurrentPosition + totalTicks);
+                }
+                break;
+
+            case RIGHT:
+                for (DcMotor motor: motorList) {
+                    if (motor == frontLeft || motor == backLeft) motor.setTargetPosition(motor.getCurrentPosition + totalTicks);
+                    else motor.setTargetPosition(motor.getCurrentPosition - totalTicks);
+                }
+                break;
+        }
+
+        for (DcMotor motor : motorList){
+            motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            motor.setPower(power);
+
+            opMode.telemetry.addData("Power FORWARD", Drive);
+            opMode.telemetry.addData("Current", motor.getCurrentPosition());
+            opMode.telemetry.addData("Target", motor.getTargetPosition());
+
+        }
+
+        for (DcMotor motor : motorList) { 
+            if (Math.abs(motor.getTargetPosition - motor.getCurrentPosition) < tickRange) motor.setPower(0);
+        }
+
+        opMode.telemetry.update();
+        }
+
+    }
+    
+    /////////////////////
+    // Drive Functions //
+    /////////////////////
 
     //enums for directions, you can use switch and then case FORWARD : . . . etc.
     public enum direction {
@@ -26,131 +190,57 @@ public class HardAuto extends hardware {
         RIGHT
     }
 
-    public void moveInEncoder(double inches, direction dir, double power) {
-
-
-        inches *= 62;
-        int in = (int) Math.round(inches);
-
-        switch (dir) {
-            case FORWARD:
-                frontLeft.setTargetPosition(-in);
-                frontRight.setTargetPosition(-in);
-                backRight.setTargetPosition(in);
-                backLeft.setTargetPosition(in);
-                break;
-            case BACKWARD:
-                frontLeft.setTargetPosition(-in);
-                frontRight.setTargetPosition(in);
-                backRight.setTargetPosition(-in);
-                backLeft.setTargetPosition(in);
-                break;
-            case LEFT:
-                frontLeft.setTargetPosition(in);
-                frontRight.setTargetPosition(in);
-                backRight.setTargetPosition(in);
-                backLeft.setTargetPosition(in);
-                break;
-            case RIGHT:
-                frontLeft.setTargetPosition(-in);
-                frontRight.setTargetPosition(-in);
-                backRight.setTargetPosition(-in);
-                backLeft.setTargetPosition(-in);
-                break;
-
-
-        }
-
-        for (DcMotor motor : Drive) {
-            motor.setPower(power);
-            motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-
-        }
-
-    }
-
-    public void moveIn(double time, direction dir, double power) {
-
-
-        switch (dir) {
-            case FORWARD:
-                frontLeft.setPower(power);
-                frontRight.setPower(-power);
-                backRight.setPower(-power);
-                backLeft.setPower(power);
-                break;
-            case BACKWARD:
-                frontLeft.setPower(-power);
-                frontRight.setPower(power);
-                backRight.setPower(power);
-                backLeft.setPower(-power);
-                break;
-            case LEFT:
-                frontLeft.setPower(power);
-                frontRight.setPower(power);
-                backRight.setPower(power);
-                backLeft.setPower(power);
-                break;
-            case RIGHT:
-                frontLeft.setPower(power);
-                frontRight.setPower(power);
-                backRight.setPower(power);
-                backLeft.setPower(power);
-                break;
-
-
-        }
-    }
 
     public void goInches(double inches, direction dir, double power) {
 
-        int totalInches = (int) (inches * ticksPerInch);
-
-
+        int totalTicks = (int) (inches * ticksPerInch);
+        
 
         switch (dir) {
             case FORWARD:
-
-                for (DcMotor motor : Drive){
-
-                    motor.setTargetPosition(totalInches);
-                    if (motor == backLeft || motor == frontLeft){motor.setTargetPosition(-totalInches);}
-                    else {motor.setTargetPosition(totalInches);}
-                    motor.setPower(power);
-                    motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    opMode.telemetry.addData("Power FORWARD", Drive);
-                    opMode.telemetry.addData("Current", motor.getCurrentPosition());
-                    opMode.telemetry.addData("Target", motor.getTargetPosition());
-                }
-                while (frontLeft.isBusy()){
-                    opMode.telemetry.addData("FLM Current", frontLeft.getCurrentPosition());
-                    //Do Nothing
+                for (DcMotor motor: drive) {
+                    motor.setTargetPosition(motor.getCurrentPosition + totalTicks);
                 }
                 break;
+                
             case BACKWARD:
-                for (DcMotor motor : Drive){
-                    motor.setTargetPosition(totalInches);
-                    if (motor == backLeft || motor == frontLeft){motor.setTargetPosition(totalInches);}
-                    else {motor.setTargetPosition(-totalInches);}
-                    motor.setPower(power);
-                    motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    opMode.telemetry.addData("Power FORWARD", Drive);
-                    opMode.telemetry.addData("Current", motor.getCurrentPosition());
-                    opMode.telemetry.addData("Target", motor.getTargetPosition());
-                }
-                while (frontLeft.isBusy()){
-                    //Do Nothing
+                for (DcMotor motor: drive) {
+                    motor.setTargetPosition(motor.getCurrentPosition - totalTicks);
                 }
                 break;
+
             case LEFT:
-
+                for (DcMotor motor: drive) {
+                    if (motor == frontLeft || motor == backLeft) motor.setTargetPosition(motor.getCurrentPosition - totalTicks);
+                    else motor.setTargetPosition(motor.getCurrentPosition + totalTicks);
+                }
                 break;
+
             case RIGHT:
-                break;
+                for (DcMotor motor: drive) {
+                    if (motor == frontLeft || motor == backLeft) motor.setTargetPosition(motor.getCurrentPosition + totalTicks);
+                    else motor.setTargetPosition(motor.getCurrentPosition - totalTicks);
+                }
 
+                break;
+            }
+
+        for (DcMotor motor : Drive){
+            motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            motor.setPower(power);
+
+            opMode.telemetry.addData("Power FORWARD", Drive);
+            opMode.telemetry.addData("Current", motor.getCurrentPosition());
+            opMode.telemetry.addData("Target", motor.getTargetPosition());
 
         }
+
+        if ( totalTicks - 100 < frontLeft.getCurrentPosition() || frontLeft.getCurrentPosition() < totalTicks + 100 ) {
+            for (DcMotor motor : Drive){
+                motor.setPower(0);
+            }
+        }
+
         opMode.telemetry.update();
 
     }
