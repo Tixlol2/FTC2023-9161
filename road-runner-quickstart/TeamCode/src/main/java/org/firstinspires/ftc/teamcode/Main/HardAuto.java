@@ -89,7 +89,7 @@ public class HardAuto extends hardware {
 
     }
 
-    public static class motor {
+    public static class motors {
         double motorInTicks;
         double gearMulti;
         double motorTicks;
@@ -100,7 +100,7 @@ public class HardAuto extends hardware {
 
         final int tickRange = 100;
 
-        motor(double motorInticks, double gearMulti, double motorTicks, double outRadius, DcMotor[] motorList) {
+        motors(double motorInticks, double gearMulti, double motorTicks, double outRadius, DcMotor[] motorList) {
             this.motorInTicks = motorInticks;
             this.gearMulti = gearMulti;
             this.motorTicks = motorTicks;
@@ -112,19 +112,23 @@ public class HardAuto extends hardware {
         }
 
         public void runTo(int ticks, double power) {
-                for (Dcmotor motor : motorList) {
+                for (DcMotor motor : motorList) {
                     motor.setPower(power);
                 }
 
                 for (DcMotor motor : motorList) { 
-                    if (Math.abs(motor.getTargetPosition - motor.getCurrentPosition) < tickRange) motor.setPower(0);
+                    if (Math.abs(motor.getTargetPosition() - motor.getCurrentPosition()) < tickRange) motor.setPower(0);
                 }
 
             }
         
     }
     
-    public static class driveMotor extends motor {
+    public class driveMotors extends motors {
+
+        driveMotors(double motorInticks, double gearMulti, double motorTicks, double outRadius, DcMotor[] motorList) {
+            super(motorInticks, gearMulti, motorTicks, outRadius, motorList);
+        }
 
         public void goInches(double inches, direction dir, double power) {
 
@@ -134,27 +138,27 @@ public class HardAuto extends hardware {
         switch (dir) {
             case FORWARD:
                 for (DcMotor motor: motorList) {
-                    motor.setTargetPosition(motor.getCurrentPosition + totalTicks);
+                    motor.setTargetPosition(motor.getCurrentPosition() + totalTicks);
                 }
                 break;
                 
             case BACKWARD:
                 for (DcMotor motor: motorList) {
-                    motor.setTargetPosition(motor.getCurrentPosition - totalTicks);
+                    motor.setTargetPosition(motor.getCurrentPosition() - totalTicks);
                 }
                 break;
 
             case LEFT:
                 for (DcMotor motor: motorList) {
-                    if (motor == frontLeft || motor == backLeft) motor.setTargetPosition(motor.getCurrentPosition - totalTicks);
-                    else motor.setTargetPosition(motor.getCurrentPosition + totalTicks);
+                    if (motor == frontLeft || motor == backLeft) motor.setTargetPosition(motor.getCurrentPosition() - totalTicks);
+                    else motor.setTargetPosition(motor.getCurrentPosition() + totalTicks);
                 }
                 break;
 
             case RIGHT:
                 for (DcMotor motor: motorList) {
-                    if (motor == frontLeft || motor == backLeft) motor.setTargetPosition(motor.getCurrentPosition + totalTicks);
-                    else motor.setTargetPosition(motor.getCurrentPosition - totalTicks);
+                    if (motor == frontLeft || motor == backLeft) motor.setTargetPosition(motor.getCurrentPosition() + totalTicks);
+                    else motor.setTargetPosition(motor.getCurrentPosition() - totalTicks);
                 }
                 break;
         }
@@ -170,7 +174,7 @@ public class HardAuto extends hardware {
         }
 
         for (DcMotor motor : motorList) { 
-            if (Math.abs(motor.getTargetPosition - motor.getCurrentPosition) < tickRange) motor.setPower(0);
+            if (Math.abs(motor.getTargetPosition() - motor.getCurrentPosition()) < tickRange) motor.setPower(0);
         }
 
         opMode.telemetry.update();
@@ -198,28 +202,28 @@ public class HardAuto extends hardware {
 
         switch (dir) {
             case FORWARD:
-                for (DcMotor motor: drive) {
-                    motor.setTargetPosition(motor.getCurrentPosition + totalTicks);
+                for (DcMotor motor: Drive) {
+                    motor.setTargetPosition(motor.getCurrentPosition() + totalTicks);
                 }
                 break;
                 
             case BACKWARD:
-                for (DcMotor motor: drive) {
-                    motor.setTargetPosition(motor.getCurrentPosition - totalTicks);
+                for (DcMotor motor: Drive) {
+                    motor.setTargetPosition(motor.getCurrentPosition() - totalTicks);
                 }
                 break;
 
             case LEFT:
-                for (DcMotor motor: drive) {
-                    if (motor == frontLeft || motor == backLeft) motor.setTargetPosition(motor.getCurrentPosition - totalTicks);
-                    else motor.setTargetPosition(motor.getCurrentPosition + totalTicks);
+                for (DcMotor motor: Drive) {
+                    if (motor == frontLeft || motor == backLeft) motor.setTargetPosition(motor.getCurrentPosition() - totalTicks);
+                    else motor.setTargetPosition(motor.getCurrentPosition() + totalTicks);
                 }
                 break;
 
             case RIGHT:
-                for (DcMotor motor: drive) {
-                    if (motor == frontLeft || motor == backLeft) motor.setTargetPosition(motor.getCurrentPosition + totalTicks);
-                    else motor.setTargetPosition(motor.getCurrentPosition - totalTicks);
+                for (DcMotor motor: Drive) {
+                    if (motor == frontLeft || motor == backLeft) motor.setTargetPosition(motor.getCurrentPosition() + totalTicks);
+                    else motor.setTargetPosition(motor.getCurrentPosition() - totalTicks);
                 }
 
                 break;
