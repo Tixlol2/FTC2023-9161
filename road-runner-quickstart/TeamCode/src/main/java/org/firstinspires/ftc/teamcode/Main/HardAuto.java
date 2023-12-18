@@ -215,15 +215,19 @@ public class HardAuto extends hardware {
 
             case LEFT:
                 for (DcMotor motor: Drive) {
-                    if (motor == frontLeft || motor == backLeft) motor.setTargetPosition(motor.getCurrentPosition() - totalTicks);
+                    if (motor == frontLeft || motor == backLeft){motor.setTargetPosition(motor.getCurrentPosition() - totalTicks)};
                     else motor.setTargetPosition(motor.getCurrentPosition() + totalTicks);
                 }
                 break;
 
             case RIGHT:
                 for (DcMotor motor: Drive) {
-                    if (motor == frontLeft || motor == backLeft) motor.setTargetPosition(motor.getCurrentPosition() + totalTicks);
-                    else motor.setTargetPosition(motor.getCurrentPosition() - totalTicks);
+                    if (motor == frontLeft || motor == backLeft){
+                        motor.setTargetPosition(motor.getCurrentPosition() + totalTicks);
+                    } else {
+                   
+                        motor.setTargetPosition(motor.getCurrentPosition() - totalTicks);
+                    }
                 }
 
                 break;
