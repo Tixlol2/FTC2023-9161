@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class hardware {
     OpMode opMode;
 
-    public DcMotor frontLeft, frontRight, backRight, backLeft, clawLeft, clawRight, droneLauncher;
+    public DcMotor frontLeft, frontRight, backRight, backLeft, outMain, inMain, droneLauncher;
 
     public DcMotor[] driveLeft, driveRight;
 
@@ -34,22 +34,22 @@ public class hardware {
         backLeft = opMode.hardwareMap.dcMotor.get("BLM");
         backRight = opMode.hardwareMap.dcMotor.get("BRM");
 
-        //reversing left side motors
+
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
         //Claw Motor Def.
-        clawLeft = opMode.hardwareMap.dcMotor.get("CL");
-        clawRight = opMode.hardwareMap.dcMotor.get("CR");
+        outMain = opMode.hardwareMap.dcMotor.get("OM");
+        inMain = opMode.hardwareMap.dcMotor.get("IM");
         //clawAngle = opMode.hardwareMap.dcMotor.get("CLA");
 
         //Servo Def.
-        servo = opMode.hardwareMap.servo.get("CLW");
+        //servo = opMode.hardwareMap.servo.get("CLW");
 
         //Drone Launch Def.
-        droneLauncher = opMode.hardwareMap.dcMotor.get("DLM");
+        //droneLauncher = opMode.hardwareMap.dcMotor.get("DLM");
 
-        droneLauncher.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //droneLauncher.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         driveLeft = new DcMotor[]{frontLeft, backLeft};
         driveRight = new DcMotor[]{frontRight, backRight};
@@ -57,10 +57,10 @@ public class hardware {
         Drive = new DcMotor[]{frontLeft, backLeft, frontRight, backRight};
 
         for (DcMotor motor : Drive){
-            motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
             motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            opMode.telemetry.addData("Motor Init for Drive", motor);
+
+            opMode.telemetry.addData("Motor Init for Drive", Drive);
             opMode.telemetry.update();
 
         }

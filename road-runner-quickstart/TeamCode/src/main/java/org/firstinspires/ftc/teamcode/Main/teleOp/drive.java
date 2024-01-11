@@ -1,7 +1,9 @@
-package org.firstinspires.ftc.teamcode.Main;
+package org.firstinspires.ftc.teamcode.Main.teleOp;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
+import org.firstinspires.ftc.teamcode.Main.hardware;
 
 @TeleOp(name = "Drive", group = "TeleOp")
 
@@ -60,9 +62,9 @@ public class drive extends OpMode {
         double power3 = v2 - rotation;
         double power4 = v1 - rotation;
 
-        r.frontLeft.setPower(power1 * deflator);
-        r.frontRight.setPower(power2 * deflator);
-        r.backLeft.setPower(power3 * deflator);
+        r.frontLeft.setPower((power1) * deflator);
+        r.frontRight.setPower(-power2 * deflator);
+        r.backLeft.setPower(-(power3) * deflator);
         r.backRight.setPower(power4 * deflator);
         //////////////////////////
         // END OF MECANUM DRIVE //
@@ -70,6 +72,9 @@ public class drive extends OpMode {
 
         //REV HD Motor outputs 28 ticks per rotation before gearbox.
         // will wheel motors be put through gear ratio? or just conveyer
-        
+
+
+        r.inMain.setPower(gamepad2.right_stick_y);
+        r.outMain.setPower(gamepad2.left_stick_y);
     }
 }

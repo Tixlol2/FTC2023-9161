@@ -15,9 +15,10 @@ public class PIDTesting extends OpMode{
     public float target = 0;
 
     hardware r = new hardware();
+    HardAuto b = new HardAuto();
 
     FtcDashboard dash = FtcDashboard.getInstance();
-    private hardware.pidController controller;
+    private HardAuto.pidController controller;
     //private PIDController controller;
 
     public static float p = 0, i = 0, d = 0;
@@ -29,7 +30,7 @@ public class PIDTesting extends OpMode{
     private DcMotorEx frontLeft;
     @Override
     public void init() {
-        controller = new hardware.pidController(p,i,d);
+        controller = new HardAuto.pidController(p,i,d);
         telemetry = new MultipleTelemetry(telemetry, dash.getTelemetry());
 
             frontLeft = hardwareMap.get(DcMotorEx.class, "FLM");

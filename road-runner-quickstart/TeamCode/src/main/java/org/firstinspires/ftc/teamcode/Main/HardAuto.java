@@ -7,7 +7,7 @@ public class HardAuto extends hardware {
 
     final double motorTickCount = 28;
 
-    final double gearBoxMulti = 15;
+    final double gearBoxMulti = 40;
 
     final double updatedMotorTickCount = motorTickCount * gearBoxMulti;
 
@@ -89,15 +89,14 @@ public class HardAuto extends hardware {
 
     }
 
+    //Motors is used to save drive constants for a given set/list of motors
     public static class motors {
         double motorInTicks;
         double gearMulti;
         double motorTicks;
         double outRadius;
         double tickInches;
-
         DcMotor[] motorList;
-
         final int tickRange = 100;
 
         motors(double motorInticks, double gearMulti, double motorTicks, double outRadius, DcMotor[] motorList) {
@@ -111,6 +110,10 @@ public class HardAuto extends hardware {
 
         }
 
+
+        /*
+        Probably not needed?
+
         public void runTo(int ticks, double power) {
                 for (DcMotor motor : motorList) {
                     motor.setPower(power);
@@ -121,9 +124,11 @@ public class HardAuto extends hardware {
                 }
 
             }
+            */
         
     }
-    
+
+    //driverMotors is used specifically for motors on your drivetrain and only works if your drivemotors are named appropriately
     public class driveMotors extends motors {
 
         driveMotors(double motorInticks, double gearMulti, double motorTicks, double outRadius, DcMotor[] motorList) {
@@ -215,37 +220,60 @@ public class HardAuto extends hardware {
 
             case LEFT:
                 for (DcMotor motor: Drive) {
-                    if (motor == frontLeft || motor == backLeft) motor.setTargetPosition(motor.getCurrentPosition() - totalTicks);
+                    if (motor == frontLeft || motor == backRight) motor.setTargetPosition(motor.getCurrentPosition() - totalTicks);
                     else motor.setTargetPosition(motor.getCurrentPosition() + totalTicks);
                 }
                 break;
 
             case RIGHT:
                 for (DcMotor motor: Drive) {
-                    if (motor == frontLeft || motor == backLeft) motor.setTargetPosition(motor.getCurrentPosition() + totalTicks);
-                    else motor.setTargetPosition(motor.getCurrentPosition() - totalTicks);
+                    if (motor == frontRight || motor == backLeft) motor.setTargetPosition(motor.getCurrentPosition() - totalTicks);
+                    else motor.setTargetPosition(motor.getCurrentPosition() + totalTicks);
                 }
 
                 break;
             }
 
         for (DcMotor motor : Drive){
+
             motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             motor.setPower(power);
 
-            opMode.telemetry.addData("Power FORWARD", Drive);
-            opMode.telemetry.addData("Current", motor.getCurrentPosition());
-            opMode.telemetry.addData("Target", motor.getTargetPosition());
+
 
         }
 
-        if ( totalTicks - 100 < frontLeft.getCurrentPosition() || frontLeft.getCurrentPosition() < totalTicks + 100 ) {
-            for (DcMotor motor : Drive){
-                motor.setPower(0);
+
+        for (DcMotor motor : Drive){
+            while (!(Math.abs(motor.getTargetPosition() - motor.getCurrentPosition()) == 0)) {
+                opMode.telemetry.addData("Target", motor.getTargetPosition());
+                opMode.telemetry.addData("Current", motor.getCurrentPosition());
+
+                opMode.telemetry.update();
             }
+            opMode.telemetry.addData("Calling stop", motor);
+            motor.setPower(0);
         }
+
+
 
         opMode.telemetry.update();
 
+
+
+
     }
+
+    public void resetEncoders(){
+
+        for (DcMotor motor : Drive){
+
+           motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+
+        }
+
+
+    }
+
 }
