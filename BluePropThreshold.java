@@ -14,7 +14,7 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.firstinspires.ftc.teamcode.Main.Teleop.HardAuto;
 
-public class RedPropThreshold implements VisionProcessor {
+public class BluePropThreshold implements VisionProcessor {
 
     HardAuto r = new HardAuto();
 
@@ -35,7 +35,7 @@ public class RedPropThreshold implements VisionProcessor {
             new Point(0, 0),
             new Point(0, 0)
     );
-
+    
     @Override
     public void init(int width, int height, CameraCalibration calibration) {
 
@@ -46,14 +46,14 @@ public class RedPropThreshold implements VisionProcessor {
         Imgproc.cvtColor(frame, testMat, Imgproc.COLOR_RGB2HSV);
 
 
-        Scalar lowHSVRedLower = new Scalar(0, 100, 20);  //Beginning of Color Wheel
-        Scalar lowHSVRedUpper = new Scalar(10, 255, 255);
+        Scalar lowHSVBlueLower = new Scalar(100, 0, 20);  //Beginning of Color Wheel
+        Scalar lowHSVBlueUpper = new Scalar(255, 10, 255);
 
-        Scalar redHSVRedLower = new Scalar(160, 100, 20); //Wraps around Color Wheel
-        Scalar highHSVRedUpper = new Scalar(180, 255, 255);
+        Scalar redHSVBlueLower = new Scalar(160, 100, 20); //Wraps around Color Wheel
+        Scalar highHSVBlueUpper = new Scalar(180, 255, 255);
 
-        Core.inRange(testMat, lowHSVRedLower, lowHSVRedUpper, lowMat);
-        Core.inRange(testMat, redHSVRedLower, highHSVRedUpper, highMat);
+        Core.inRange(testMat, lowHSVBlueLower, lowHSVBlueUpper, lowMat);
+        Core.inRange(testMat, redHSVBlueLower, highHSVBlueUpper, highMat);
 
         testMat.release();
 
@@ -78,9 +78,9 @@ public class RedPropThreshold implements VisionProcessor {
         }else{
             outStr = "right";
         }
-    /*This line should only be added in when you want to see your custom pipeline
-                                      on the driver station stream, do not use this permanently in your code as
-                                      you use the "frame" mat for all of your pipelines, such as April Tags*/
+/*This line should only be added in when you want to see your custom pipeline
+                                  on the driver station stream, do not use this permanently in your code as
+                                  you use the "frame" mat for all of your pipelines, such as April Tags*/
         //finalMat.copyTo(frame);
         return null;            //You do not return the original mat anymore, instead return null
 
@@ -92,7 +92,7 @@ public class RedPropThreshold implements VisionProcessor {
 
     @Override
     public void onDrawFrame(Canvas canvas, int onscreenWidth, int onscreenHeight, float scaleBmpPxToCanvasPx, float scaleCanvasDensity, Object userContext) {
-            canvas.drawRect(25, 25, 50, 50, new Paint());
+        canvas.drawRect(25, 25, 50, 50, new Paint());
     }
 
     public String getPropPosition(){  //Returns postion of the prop in a String
