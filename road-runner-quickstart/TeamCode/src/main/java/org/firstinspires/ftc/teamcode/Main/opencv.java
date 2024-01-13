@@ -2,16 +2,17 @@ package org.firstinspires.ftc.teamcode.Main;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.opencv.core.*;
+import org.opencv.core.Core;
+import org.opencv.core.Mat;
+import org.opencv.core.MatOfPoint;
+import org.opencv.core.Point;
+import org.opencv.core.Rect;
+import org.opencv.core.Scalar;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.imgproc.Moments;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -30,13 +31,15 @@ public class opencv extends LinearOpMode {
     double cY = 0;
     double width = 0;
 
-    private OpenCvCamera controlHubCam;  // Use OpenCvCamera class from FTC SDK
+    public OpenCvCamera controlHubCam;  // Use OpenCvCamera class from FTC SDK
     private static final int CAMERA_WIDTH = 640; // width  of wanted camera resolution
     private static final int CAMERA_HEIGHT = 360; // height of wanted camera resolution
 
     // Calculate the distance using the formula
     public static final double objectWidthInRealWorldUnits = 3.75;  // Replace with the actual width of the object in real-world units
     public static final double focalLength = 728;  // Replace with the focal length of the camera in pixels
+
+
 
 
     @Override
@@ -55,6 +58,8 @@ public class opencv extends LinearOpMode {
             telemetry.addData("Distance in Inch", (getDistance(width)));
             telemetry.update();
 
+
+
             // The OpenCV pipeline automatically processes frames and handles detection
         }
 
@@ -62,7 +67,7 @@ public class opencv extends LinearOpMode {
         controlHubCam.stopStreaming();
     }
 
-    private void initOpenCV() {
+    public void initOpenCV() {
 
         // Create an instance of the camera
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
@@ -161,5 +166,11 @@ public class opencv extends LinearOpMode {
         return distance;
     }
 
+    private void aprilTagStuff(){
 
+
+
+
+
+    }
 }

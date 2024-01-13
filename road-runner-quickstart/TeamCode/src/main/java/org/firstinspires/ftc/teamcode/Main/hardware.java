@@ -7,6 +7,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class hardware {
+
+    opencv opencv = new opencv();
     OpMode opMode;
 
     public DcMotor frontLeft, frontRight, backRight, backLeft, outMain, inMain, droneLauncher;
@@ -16,7 +18,7 @@ public class hardware {
 
 
     public DcMotor[] Drive;
-    public Servo servo;
+    public Servo tweet;
   
 
     public void init_robot(OpMode opMode) {
@@ -39,12 +41,12 @@ public class hardware {
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
         //Claw Motor Def.
-        outMain = opMode.hardwareMap.dcMotor.get("OM");
-        inMain = opMode.hardwareMap.dcMotor.get("IM");
+        outMain = opMode.hardwareMap.dcMotor.get("OUT");
+        inMain = opMode.hardwareMap.dcMotor.get("IN");
         //clawAngle = opMode.hardwareMap.dcMotor.get("CLA");
 
         //Servo Def.
-        //servo = opMode.hardwareMap.servo.get("CLW");
+        tweet = opMode.hardwareMap.servo.get("TWT");
 
         //Drone Launch Def.
         //droneLauncher = opMode.hardwareMap.dcMotor.get("DLM");
@@ -66,6 +68,7 @@ public class hardware {
         }
 
         opMode.telemetry.update();
+
     }
 }
 

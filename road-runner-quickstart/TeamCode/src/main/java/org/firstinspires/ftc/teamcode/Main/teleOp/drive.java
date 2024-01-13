@@ -4,12 +4,14 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Main.hardware;
+import org.firstinspires.ftc.teamcode.Main.opencv;
 
 @TeleOp(name = "Drive", group = "TeleOp")
 
 public class drive extends OpMode {
 
     hardware r = new hardware();
+    opencv opencv = new opencv();
 
     @Override
     public void init() {
@@ -20,7 +22,7 @@ public class drive extends OpMode {
     public void loop() {
 
         double deflator;
-        
+
         deflator = gamepad1.left_bumper ? 0.9 : gamepad1.right_bumper ? 0.5 : 0.7;
 
         double y = gamepad1.left_stick_y;
@@ -74,7 +76,18 @@ public class drive extends OpMode {
         // will wheel motors be put through gear ratio? or just conveyer
 
 
-        r.inMain.setPower(gamepad2.right_stick_y);
-        r.outMain.setPower(gamepad2.left_stick_y);
+        //set limiters for pixel System
+
+
+        r.inMain.setPower(gamepad2.right_stick_y * 0.7);
+        r.outMain.setPower(gamepad2.left_stick_y * 0.7);
+        if (gamepad2.a) {
+            r.tweet.setPosition(Math.abs(r.tweet.getPosition() - 1));
+        }
+
+        opencv.initOpenCV();
+
+
+
     }
 }

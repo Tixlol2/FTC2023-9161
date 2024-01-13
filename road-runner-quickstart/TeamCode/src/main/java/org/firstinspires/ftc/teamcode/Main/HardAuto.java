@@ -276,4 +276,12 @@ public class HardAuto extends hardware {
 
     }
 
+    public int checkRand(){
+
+
+
+
+        return 0;
+    }
+
 }
