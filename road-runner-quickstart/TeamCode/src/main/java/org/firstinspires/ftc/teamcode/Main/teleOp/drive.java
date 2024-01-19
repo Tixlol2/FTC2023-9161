@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Main.teleOp;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Main.hardware;
 import org.firstinspires.ftc.teamcode.Main.opencv;
@@ -22,6 +23,7 @@ public class drive extends OpMode {
     public void loop() {
 
         double deflator;
+        ElapsedTime Time = new ElapsedTime();
 
         deflator = gamepad1.left_bumper ? 0.9 : gamepad1.right_bumper ? 0.5 : 0.7;
 
@@ -80,12 +82,18 @@ public class drive extends OpMode {
 
 
         r.inMain.setPower(gamepad2.right_stick_y * 0.7);
-        r.outMain.setPower(gamepad2.left_stick_y * 0.7);
-        if (gamepad2.a) {
+        if (r.outMain.getCurrentPosition() > 100) r.outMain.setPower(gamepad2.left_stick_y * 0.7);
+        if (r.outMain.getCurrentPosition() < 1000) r.outMain.setPower(-.5);
+        else r.outMain.setPower(.5);
+
+
+
+        if (gamepad2.a && Time.milliseconds()  > 500) {
             r.tweet.setPosition(Math.abs(r.tweet.getPosition() - 1));
+            Time.reset();
         }
 
-        opencv.initOpenCV();
+
 
 
 
