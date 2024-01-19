@@ -220,11 +220,7 @@ public class HardAuto extends hardware {
 
             case LEFT:
                 for (DcMotor motor: Drive) {
-
                     if (motor == frontLeft || motor == backRight) motor.setTargetPosition(motor.getCurrentPosition() - totalTicks);
-
-                    if (motor == frontLeft || motor == backLeft) motor.setTargetPosition(motor.getCurrentPosition() - totalTicks);
-
                     else motor.setTargetPosition(motor.getCurrentPosition() + totalTicks);
                 }
                 break;
@@ -233,13 +229,6 @@ public class HardAuto extends hardware {
                 for (DcMotor motor: Drive) {
                     if (motor == frontRight || motor == backLeft) motor.setTargetPosition(motor.getCurrentPosition() - totalTicks);
                     else motor.setTargetPosition(motor.getCurrentPosition() + totalTicks);
-                    if (motor == frontLeft || motor == backLeft){
-                        motor.setTargetPosition(motor.getCurrentPosition() + totalTicks);
-                    } else {
-                   
-                        motor.setTargetPosition(motor.getCurrentPosition() - totalTicks);
-                    }
-
                 }
 
                 break;
@@ -275,7 +264,6 @@ public class HardAuto extends hardware {
 
     }
 
-
     public void resetEncoders(){
 
         for (DcMotor motor : Drive){
@@ -296,6 +284,4 @@ public class HardAuto extends hardware {
         return 0;
     }
 
-
 }
-
