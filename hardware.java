@@ -1,17 +1,17 @@
-package org.firstinspires.ftc.teamcode.Main;
+package org.firstinspires.ftc.teamcode.Main.Teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class hardware {
 
     opencv opencv = new opencv();
     OpMode opMode;
 
-    public DcMotor frontLeft, frontRight, backRight, backLeft, outMain, inMain, droneLauncher;
+    public DcMotor frontLeft, frontRight, backRight, backLeft, outMain, inLeft, inRight, hang;
 
     public DcMotor[] driveLeft, driveRight;
 
@@ -19,6 +19,8 @@ public class hardware {
 
     public DcMotor[] Drive;
     public Servo tweet;
+
+    public CRServo clawServo;
   
 
     public void init_robot(OpMode opMode) {
@@ -42,11 +44,15 @@ public class hardware {
 
         //Claw Motor Def.
         outMain = opMode.hardwareMap.dcMotor.get("OUT");
-        inMain = opMode.hardwareMap.dcMotor.get("IN");
-        //clawAngle = opMode.hardwareMap.dcMotor.get("CLA");
+        inLeft = opMode.hardwareMap.dcMotor.get("INL");
+        clawServo = opMode.hardwareMap.crservo.get("CLW");
+        inRight = opMode.hardwareMap.dcMotor.get("INR");
 
         //Servo Def.
         tweet = opMode.hardwareMap.servo.get("TWT");
+
+        //Hanger
+        //hang = opMode.hardwareMap.dcMotor.get("HNG");
 
         //Drone Launch Def.
         //droneLauncher = opMode.hardwareMap.dcMotor.get("DLM");

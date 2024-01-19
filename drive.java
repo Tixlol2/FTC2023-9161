@@ -1,17 +1,20 @@
-package org.firstinspires.ftc.teamcode.Main.teleOp;
+package org.firstinspires.ftc.teamcode.Main.Teleop;
+
+import static android.os.SystemClock.sleep;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.Main.hardware;
-import org.firstinspires.ftc.teamcode.Main.opencv;
+import org.firstinspires.ftc.teamcode.Main.Auton.vision;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+
 
 @TeleOp(name = "Drive", group = "TeleOp")
 
 public class drive extends OpMode {
 
     hardware r = new hardware();
-    opencv opencv = new opencv();
+    vision v = new vision();
 
     @Override
     public void init() {
@@ -20,6 +23,7 @@ public class drive extends OpMode {
 
     @Override
     public void loop() {
+
 
         double deflator;
 
@@ -78,14 +82,46 @@ public class drive extends OpMode {
 
         //set limiters for pixel System
 
+        if (gamepad2.right_trigger > 0) {
+            r.inLeft.setPower(gamepad2.right_trigger * 0.7 * deflator);
+            r.inRight.setPower(-gamepad2.right_trigger * 0.7 * deflator);
+        }
+        if (gamepad2.left_trigger > 0){
+            r.inLeft.setPower(-gamepad2.left_trigger * 0.7 * deflator);
+            r.inRight.setPower(gamepad2.left_trigger * 0.7 * deflator);
+        }
 
-        r.inMain.setPower(gamepad2.right_stick_y * 0.7);
-        r.outMain.setPower(gamepad2.left_stick_y * 0.7);
+        r.outMain.setPower(gamepad2.left_stick_y * 0.7 * deflator);
         if (gamepad2.a) {
             r.tweet.setPosition(Math.abs(r.tweet.getPosition() - 1));
         }
+        //opens and closes claw
+        if (gamepad2.b) {
 
-        opencv.initOpenCV();
+            r.clawServo.setPower(1);
+        } else if (gamepad2.x) {
+            r.clawServo.setPower(-1);
+        } else {
+            r.clawServo.setPower(0);
+        }
+
+        //Hang Mechanism
+        if (gamepad2.dpad_up){
+            r.hang.setPower(.9);
+        } else if (gamepad2.dpad_down){
+            r.hang.setPower(-.9);
+        }
+
+
+        // Push telemetry to the Driver Station.
+        telemetry.update();
+
+
+
+
+
+
+
 
 
 
