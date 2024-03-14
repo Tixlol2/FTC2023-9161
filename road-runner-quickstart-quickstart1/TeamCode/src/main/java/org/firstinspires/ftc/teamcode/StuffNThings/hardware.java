@@ -27,14 +27,21 @@ public class hardware {
 
 
     public DcMotor[] Drive;
-    public Servo tweet;
+    public Servo tweet, outTakeS, pixelPusher, clawServo;
 
-    public CRServo clawServo;
+    public DcMotor[] all;
+
+
   
 
     public void init_robot(OpMode opMode) {
         this.opMode = opMode;
         init_hardware();
+    }
+
+    public void init_robot_noDrive(OpMode opMode) {
+        this.opMode = opMode;
+        init_hardware_noDrive();
     }
 
 
@@ -59,38 +66,89 @@ public class hardware {
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        //Claw Motor Def.
-        outMain = opMode.hardwareMap.dcMotor.get("OUT");
+        //Claw Def.
         inLeft = opMode.hardwareMap.dcMotor.get("INL");
-        clawServo = opMode.hardwareMap.crservo.get("CLW");
         inRight = opMode.hardwareMap.dcMotor.get("INR");
+        clawServo = opMode.hardwareMap.servo.get("CLW");
 
-        //Servo Def.
+        //Airplane Launcher Servo Def.
         tweet = opMode.hardwareMap.servo.get("TWT");
 
         //Hanger
         hang = opMode.hardwareMap.dcMotor.get("HNG");
 
-        //Drone Launch Def.
-        //droneLauncher = opMode.hardwareMap.dcMotor.get("DLM");
+        //Outtake
+        outMain = opMode.hardwareMap.dcMotor.get("OUT");
+        outTakeS = opMode.hardwareMap.servo.get("OUTS");
 
-        //droneLauncher.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //Pusher Def.
+        pixelPusher = opMode.hardwareMap.servo.get("CM");
+
+
+
 
         driveLeft = new DcMotor[]{frontLeft, backLeft};
         driveRight = new DcMotor[]{frontRight, backRight};
 
         Drive = new DcMotor[]{frontLeft, backLeft, frontRight, backRight};
+        all = new DcMotor[]{outMain, inLeft, inRight, hang};
 
         for (DcMotor motor : Drive){
 
             motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-            opMode.telemetry.addData("Motor Init for Drive", Drive);
-            opMode.telemetry.update();
-
         }
 
-        opMode.telemetry.update();
+    }
+
+    public void init_hardware_noDrive() {
+
+
+
+
+        //Gyro def.
+        //imu = opMode.hardwareMap.get(BNO055IMU.class, "imu");
+
+        //BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();//.Parameters(new RevHubOrientationOnRobot(
+        //parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+        //imu.initialize(parameters);
+
+
+        //backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        //frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        //Claw Def.
+        inLeft = opMode.hardwareMap.dcMotor.get("INL");
+        inRight = opMode.hardwareMap.dcMotor.get("INR");
+        clawServo = opMode.hardwareMap.servo.get("CLW");
+
+        //Airplane Launcher Servo Def.
+        tweet = opMode.hardwareMap.servo.get("TWT");
+
+        //Hanger
+        hang = opMode.hardwareMap.dcMotor.get("HNG");
+
+        //Outtake
+        outMain = opMode.hardwareMap.dcMotor.get("OUT");
+        outTakeS = opMode.hardwareMap.servo.get("OUTS");
+
+        //Pusher Def.
+        pixelPusher = opMode.hardwareMap.servo.get("CM");
+
+
+        all = new DcMotor[]{outMain, inLeft, inRight, hang};
+/*
+        driveLeft = new DcMotor[]{frontLeft, backLeft};
+        driveRight = new DcMotor[]{frontRight, backRight};
+
+        Drive = new DcMotor[]{frontLeft, backLeft, frontRight, backRight};
+
+
+        for (DcMotor motor : Drive){
+
+            motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+*/
+
 
     }
 }

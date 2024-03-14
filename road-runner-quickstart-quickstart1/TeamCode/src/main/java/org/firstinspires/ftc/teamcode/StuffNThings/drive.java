@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.StuffNThings;
 
 import static android.os.SystemClock.sleep;
 
+
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -15,6 +17,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 @TeleOp(name = "Drive", group = "TeleOp")
 
 public class drive extends OpMode {
+
 
     hardware r = new hardware();
     vision v = new vision();
@@ -31,6 +34,11 @@ public class drive extends OpMode {
         double deflator;
 
         deflator = gamepad1.left_bumper ? 0.9 : gamepad1.right_bumper ? 0.5 : 0.7;
+
+        double deflator2;
+
+        deflator2 = gamepad2.left_bumper ? 0.9 : gamepad2.right_bumper ? 0.5 : 0.7;
+
 
         double y = gamepad1.left_stick_y;
         double x = gamepad1.left_stick_x;
@@ -97,18 +105,22 @@ public class drive extends OpMode {
             r.inRight.setPower(gamepad2.left_trigger * 0.7 * deflator);
         }
 
-        r.outMain.setPower(gamepad2.left_stick_y * 0.7 * deflator);
+
+
+
+        r.outMain.setPower(gamepad2.left_stick_y * 0.7 * deflator2);
+
+
+
+        r.inLeft.setPower(-(gamepad2.right_stick_y * 0.7 * deflator2));
+        r.inRight.setPower((gamepad2.right_stick_y * 0.7 * deflator2));
+
         if (gamepad2.a) {
             r.tweet.setPosition(Math.abs(r.tweet.getPosition() - 1));
         }
         //opens and closes claw
-        if (gamepad2.b) {
-
-            r.clawServo.setPower(1);
-        } else if (gamepad2.x) {
-            r.clawServo.setPower(-1);
-        } else {
-            r.clawServo.setPower(0);
+        if (gamepad2.x) {
+            r.clawServo.setPosition(Math.abs(r.clawServo.getPosition() - 1));
         }
 
         //Hang Mechanism
@@ -118,6 +130,10 @@ public class drive extends OpMode {
             r.hang.setPower(-.9);
         } else r.hang.setPower(0);
 
+        //Outtake Servo Toggle
+        if (gamepad2.y) {
+            r.outTakeS.setPosition(Math.abs(r.outTakeS.getPosition() - 1));
+        }
 
         // Push telemetry to the Driver Station.
         telemetry.update();

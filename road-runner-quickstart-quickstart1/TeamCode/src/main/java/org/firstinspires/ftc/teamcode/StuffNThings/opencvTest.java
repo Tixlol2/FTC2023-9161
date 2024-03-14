@@ -23,39 +23,34 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import java.util.ArrayList;
 import java.util.List;
 
-@TeleOp(name = "OpenCV Testing",  group = "TeleOp")
+@TeleOp(name = "OpenCV Testing2",  group = "TeleOp")
 
-public class opencv extends LinearOpMode {
+public class opencvTest extends LinearOpMode {
 
-    double cX = 0;
-    double cY = 0;
-    double width = 0;
+    public double cX = 0;
+    public double cY = 0;
+
+    public int randInt = 0;
 
     public OpenCvCamera controlHubCam;  // Use OpenCvCamera class from FTC SDK
     private static final int CAMERA_WIDTH = 640; // width  of wanted camera resolution
     private static final int CAMERA_HEIGHT = 360; // height of wanted camera resolution
 
-    // Calculate the distance using the formula
-    public static final double objectWidthInRealWorldUnits = 3.75;  // Replace with the actual width of the object in real-world units
-    public static final double focalLength = 728;  // Replace with the focal length of the camera in pixels
-
-
-
-
     @Override
     public void runOpMode() {
 
-        initOpenCV();
+        initOpenCV(false);
         FtcDashboard dashboard = FtcDashboard.getInstance();
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
         FtcDashboard.getInstance().startCameraStream(controlHubCam, 30);
 
 
-        waitForStart();
 
-        while (opModeIsActive()) {
+        while (!isStopRequested() && !isStarted()) {
             telemetry.addData("Coordinate", "(" + (int) cX + ", " + (int) cY + ")");
-            telemetry.addData("Distance in Inch", (getDistance(width)));
+            if (cX < 220) {telemetry.addLine("Left"); randInt = 0;}
+            else if (cX < 440) {telemetry.addLine("Middle"); randInt = 1;}
+            else telemetry.addLine("Right"); randInt = 2;
             telemetry.update();
 
 
@@ -67,26 +62,36 @@ public class opencv extends LinearOpMode {
         controlHubCam.stopStreaming();
     }
 
-    public void initOpenCV() {
+    public void initOpenCV(boolean blue) {
 
         // Create an instance of the camera
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
 //2131230820
-        telemetry.addData("Thing0", cameraMonitorViewId);
-        telemetry.update();
+        //telemetry.addData("Thing0", cameraMonitorViewId);
+        //telemetry.update();
 
         // Use OpenCvCameraFactory class from FTC SDK to create camera instance
         controlHubCam = OpenCvCameraFactory.getInstance().createWebcam(
                 hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
 
-        controlHubCam.setPipeline(new YellowBlobDetectionPipeline());
+        controlHubCam.setPipeline(new YellowBlobDetectionPipeline(blue));
 
         controlHubCam.openCameraDevice();
         controlHubCam.startStreaming(CAMERA_WIDTH, CAMERA_HEIGHT, OpenCvCameraRotation.UPRIGHT);
     }
+
     class YellowBlobDetectionPipeline extends OpenCvPipeline {
+
+        boolean blue = false;
+
+        public YellowBlobDetectionPipeline(boolean blue) {
+            this.blue = blue;
+        }
+
+
         @Override
         public Mat processFrame(Mat input) {
+
             // Preprocess the frame to detect yellow regions
             Mat yellowMask = preprocessFrame(input);
 
@@ -101,24 +106,11 @@ public class opencv extends LinearOpMode {
             if (largestContour != null) {
                 // Draw a red outline around the largest detected object
                 Imgproc.drawContours(input, contours, contours.indexOf(largestContour), new Scalar(255, 0, 0), 2);
-                // Calculate the width of the bounding box
-                width = calculateWidth(largestContour);
 
-                // Display the width next to the label
-                String widthLabel = "Width: " + (int) width + " pixels";
-                Imgproc.putText(input, widthLabel, new Point(cX + 10, cY + 20), Imgproc.FONT_HERSHEY_SIMPLEX, 0.5, new Scalar(0, 255, 0), 2);
-                //Display the Distance
-                String distanceLabel = "Distance: " + String.format("%.2f", getDistance(width)) + " inches";
-                Imgproc.putText(input, distanceLabel, new Point(cX + 10, cY + 60), Imgproc.FONT_HERSHEY_SIMPLEX, 0.5, new Scalar(0, 255, 0), 2);
                 // Calculate the centroid of the largest contour
                 Moments moments = Imgproc.moments(largestContour);
                 cX = moments.get_m10() / moments.get_m00();
                 cY = moments.get_m01() / moments.get_m00();
-
-                // Draw a dot at the centroid
-                String label = "(" + (int) cX + ", " + (int) cY + ")";
-                Imgproc.putText(input, label, new Point(cX + 10, cY), Imgproc.FONT_HERSHEY_COMPLEX, 0.5, new Scalar(0, 255, 0), 2);
-                Imgproc.circle(input, new Point(cX, cY), 5, new Scalar(0, 255, 0), -1);
 
             }
 
@@ -128,14 +120,18 @@ public class opencv extends LinearOpMode {
         private Mat preprocessFrame(Mat frame) {
             Mat hsvFrame = new Mat();
             Imgproc.cvtColor(frame, hsvFrame, Imgproc.COLOR_BGR2HSV);
-            /*
+             //RED
+
+
             Scalar lowerYellow = new Scalar(100, 100, 100);
             Scalar upperYellow = new Scalar(180, 255, 255);
-            */
-            ///*
-            Scalar lowerYellow = new Scalar(0, 100, 100);
-            Scalar upperYellow = new Scalar(100,255,255);
-             //*/
+
+            ///* BLUE
+            if (blue) {
+                lowerYellow = new Scalar(0, 100, 100);
+                upperYellow = new Scalar(100, 255, 255);
+            }
+            //*/
 
             Mat yellowMask = new Mat();
             Core.inRange(hsvFrame, lowerYellow, upperYellow, yellowMask);
@@ -161,22 +157,6 @@ public class opencv extends LinearOpMode {
 
             return largestContour;
         }
-        private double calculateWidth(MatOfPoint contour) {
-            Rect boundingRect = Imgproc.boundingRect(contour);
-            return boundingRect.width;
-        }
-
-    }
-    private static double getDistance(double width){
-        double distance = (objectWidthInRealWorldUnits * focalLength) / width;
-        return distance;
-    }
-
-    private void aprilTagStuff(){
-
-
-
-
 
     }
 }
