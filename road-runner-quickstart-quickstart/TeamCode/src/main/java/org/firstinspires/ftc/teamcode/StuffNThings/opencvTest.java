@@ -36,10 +36,11 @@ public class opencvTest extends LinearOpMode {
     private static final int CAMERA_WIDTH = 640; // width  of wanted camera resolution
     private static final int CAMERA_HEIGHT = 360; // height of wanted camera resolution
 
+
     @Override
     public void runOpMode() {
 
-        initOpenCV(false);
+        initOpenCV(true);
         FtcDashboard dashboard = FtcDashboard.getInstance();
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
         FtcDashboard.getInstance().startCameraStream(controlHubCam, 30);
@@ -52,8 +53,6 @@ public class opencvTest extends LinearOpMode {
             else if (cX < 440) {telemetry.addLine("Middle"); randInt = 1;}
             else telemetry.addLine("Right"); randInt = 2;
             telemetry.update();
-
-
 
             // The OpenCV pipeline automatically processes frames and handles detection
         }
@@ -77,7 +76,7 @@ public class opencvTest extends LinearOpMode {
         controlHubCam.setPipeline(new YellowBlobDetectionPipeline(blue));
 
         controlHubCam.openCameraDevice();
-        controlHubCam.startStreaming(CAMERA_WIDTH, CAMERA_HEIGHT, OpenCvCameraRotation.UPRIGHT);
+        controlHubCam.startStreaming(CAMERA_WIDTH, CAMERA_HEIGHT, OpenCvCameraRotation.UPSIDE_DOWN);
     }
 
     class YellowBlobDetectionPipeline extends OpenCvPipeline {
@@ -128,7 +127,7 @@ public class opencvTest extends LinearOpMode {
 
             ///* BLUE
             if (blue) {
-                lowerYellow = new Scalar(0, 100, 100);
+                lowerYellow = new Scalar(0, 50, 100);
                 upperYellow = new Scalar(100, 255, 255);
             }
             //*/

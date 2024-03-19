@@ -1,155 +1,85 @@
 package org.firstinspires.ftc.teamcode.StuffNThings;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
-
-import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
-
-import org.firstinspires.ftc.teamcode.drive.DriveConstants;
+import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cColorSensor;
 
 public class hardware {
-
-    opencv opencv = new opencv();
     OpMode opMode;
-
-    public DcMotor frontLeft, frontRight, backRight, backLeft, outMain, inLeft, inRight, hang;
-
-    public DcMotor[] driveLeft, driveRight;
-
-
-    public BNO055IMU imu;
-
-
-    public DcMotor[] Drive;
-    public Servo tweet, outTakeS, pixelPusher, clawServo;
-
-    public DcMotor[] all;
+    public DcMotor TopLeft, TopRight,BottomLeft ,BottomRight,PullupBarRotator, LeftSlide, RightSlide,inRotator,Scooper, SpinnyThing, ArmElbow, PullupBarExtender, AirplaneMotor; //AirPlanemotor;
+    public DcMotor[] drive;
+    public Servo claw, Rarm, Larm, getSlideSpool, ClawFingerOne,ClawFingerTwo;
+    public Servo InTakeStar,slideSpool, ArmExtender, PixelClampThumbLpitchOne, LpitchTwo , RpitchOne, RpitchTwo;
+    public CRServo  r,ClawWristOne,ClawWristTwo, AirplaneLauncher,RightLifter, LeftLifter;
+    public ModernRoboticsI2cColorSensor ArmColorSensor;
 
 
-  
 
-    public void init_robot(OpMode opMode) {
+
+    public void init_robot(OpMode opMode){
+
         this.opMode = opMode;
+
         init_hardware();
-    }
-
-    public void init_robot_noDrive(OpMode opMode) {
-        this.opMode = opMode;
-        init_hardware_noDrive();
-    }
-
-
-    public void init_hardware() {
-
-        //Wheel Motor Def.
-
-        frontLeft = opMode.hardwareMap.dcMotor.get("FLM");
-        frontRight = opMode.hardwareMap.dcMotor.get("FRM");
-        backLeft = opMode.hardwareMap.dcMotor.get("BLM");
-        backRight = opMode.hardwareMap.dcMotor.get("BRM");
-
-
-        //Gyro def.
-        imu = opMode.hardwareMap.get(BNO055IMU.class, "imu");
-
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();//.Parameters(new RevHubOrientationOnRobot(
-                parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
-        imu.initialize(parameters);
-
-
-        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        //Claw Def.
-        inLeft = opMode.hardwareMap.dcMotor.get("INL");
-        inRight = opMode.hardwareMap.dcMotor.get("INR");
-        clawServo = opMode.hardwareMap.servo.get("CLW");
-
-        //Airplane Launcher Servo Def.
-        tweet = opMode.hardwareMap.servo.get("TWT");
-
-        //Hanger
-        hang = opMode.hardwareMap.dcMotor.get("HNG");
-
-        //Outtake
-        outMain = opMode.hardwareMap.dcMotor.get("OUT");
-        outTakeS = opMode.hardwareMap.servo.get("OUTS");
-
-        //Pusher Def.
-        pixelPusher = opMode.hardwareMap.servo.get("CM");
-
-
-
-
-        driveLeft = new DcMotor[]{frontLeft, backLeft};
-        driveRight = new DcMotor[]{frontRight, backRight};
-
-        Drive = new DcMotor[]{frontLeft, backLeft, frontRight, backRight};
-        all = new DcMotor[]{outMain, inLeft, inRight, hang};
-
-        for (DcMotor motor : Drive){
-
-            motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        }
 
     }
 
-    public void init_hardware_noDrive() {
+    public boolean getTolerance(double val1, double val2, double tolerance){
+        return (val1+tolerance >val2) && (val1-tolerance < val2);
+    }
+    public void init_hardware(){
+////////////////////////////////////////////////////////////////////////BTW Casper Slide dude was here 2
+//        ArmColorSensor = (ModernRoboticsI2cColorSensor) opMode.hardwareMap.colorSensor.get("ACS");
+
+       TopLeft = opMode.hardwareMap.dcMotor.get("TLM");
+        TopRight = opMode.hardwareMap.dcMotor.get("TRM");
+        BottomLeft = opMode.hardwareMap.dcMotor.get("BLM");
+        BottomRight = opMode.hardwareMap.dcMotor.get("BRM");
+
+
+//        Lift = opMode.hardwareMap.dcMotor.get("LFT");
+        RightSlide = opMode.hardwareMap.dcMotor.get("RSL");
+        LeftSlide = opMode.hardwareMap.dcMotor.get("LSL");
+//        AirplaneMotor = opMode.hardwareMap.dcMotor.get("ALM");
+
+////////////////////////////////////////////////////////////////////////PEACE!
+
+//          Scooper = opMode.hardwareMap.dcMotor.get("SOM");
+//          slideSpool = opMode.hardwareMap.servo.get("SPL");
+          PullupBarExtender = opMode.hardwareMap.dcMotor.get("PBE");
+////          ArmExtender = opMode.hardwareMap.servo.get("AAE");
+          PullupBarRotator = opMode.hardwareMap.dcMotor.get("PBR");
+        AirplaneLauncher = opMode.hardwareMap.crservo.get("ALR");
+        ClawWristOne = opMode.hardwareMap.crservo.get("CWO");
+        ClawFingerOne = opMode.hardwareMap.servo.get("CFO");
+        ClawWristTwo = opMode.hardwareMap.crservo.get("CWT");
+        ClawFingerTwo = opMode.hardwareMap.servo.get("CFT");
+        //RightLifter = opMode.hardwareMap.crservo.get("RLF");
+        //LeftLifter = opMode.hardwareMap.crservo.get("LFL");
+//        PixelClampThumb = opMode.hardwareMap.servo.get("PCT");
 
 
 
 
-        //Gyro def.
-        //imu = opMode.hardwareMap.get(BNO055IMU.class, "imu");
-
-        //BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();//.Parameters(new RevHubOrientationOnRobot(
-        //parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
-        //imu.initialize(parameters);
 
 
-        //backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        //frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        //Claw Def.
-        inLeft = opMode.hardwareMap.dcMotor.get("INL");
-        inRight = opMode.hardwareMap.dcMotor.get("INR");
-        clawServo = opMode.hardwareMap.servo.get("CLW");
-
-        //Airplane Launcher Servo Def.
-        tweet = opMode.hardwareMap.servo.get("TWT");
-
-        //Hanger
-        hang = opMode.hardwareMap.dcMotor.get("HNG");
-
-        //Outtake
-        outMain = opMode.hardwareMap.dcMotor.get("OUT");
-        outTakeS = opMode.hardwareMap.servo.get("OUTS");
-
-        //Pusher Def.
-        pixelPusher = opMode.hardwareMap.servo.get("CM");
+        TopLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        BottomRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        BottomLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        TopRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
-        all = new DcMotor[]{outMain, inLeft, inRight, hang};
-/*
-        driveLeft = new DcMotor[]{frontLeft, backLeft};
-        driveRight = new DcMotor[]{frontRight, backRight};
-
-        Drive = new DcMotor[]{frontLeft, backLeft, frontRight, backRight};
 
 
-        for (DcMotor motor : Drive){
 
-            motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-*/
-
-
+       drive = new DcMotor[]{TopLeft, TopRight, BottomLeft, TopRight};
+//        for (DcMotor motor: drive){
+//            motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        }
     }
 }
 

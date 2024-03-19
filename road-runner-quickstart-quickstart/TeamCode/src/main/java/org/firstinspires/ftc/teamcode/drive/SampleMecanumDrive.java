@@ -19,12 +19,14 @@ import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAcceleration
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
@@ -55,10 +57,10 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
  */
 @Config
 public class SampleMecanumDrive extends MecanumDrive {
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(3, 0, 0);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(5, 0, 0);
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0, 0, 0);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(0, 0, 0);
 
-    public static double LATERAL_MULTIPLIER = 1.25;
+    public static double LATERAL_MULTIPLIER = 1;
 
     public static double VX_WEIGHT = 1;
     public static double VY_WEIGHT = 1;
@@ -73,6 +75,13 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     private DcMotorEx leftFront, leftRear, rightRear, rightFront;
     private List<DcMotorEx> motors;
+
+    //////////////////////////////////
+    ///////////OURS//////////////////
+    public DcMotor PullupBarRotator, LeftSlide, RightSlide, PullupBarExtender;
+    public Servo ClawFingerOne,ClawFingerTwo;
+    public CRServo ClawWristOne,ClawWristTwo, AirplaneLauncher;
+    //////////////////////////////
 
     private IMU imu;
     private VoltageSensor batteryVoltageSensor;
@@ -100,12 +109,26 @@ public class SampleMecanumDrive extends MecanumDrive {
                 DriveConstants.LOGO_FACING_DIR, DriveConstants.USB_FACING_DIR));
         imu.initialize(parameters);
 
-        leftFront = hardwareMap.get(DcMotorEx.class, "FLM");
+        leftFront = hardwareMap.get(DcMotorEx.class, "TLM");
         leftRear = hardwareMap.get(DcMotorEx.class, "BLM");
-        rightRear = hardwareMap.get(DcMotorEx.class, "BRM");
-        rightFront = hardwareMap.get(DcMotorEx.class, "FRM");
+        rightRear = hardwareMap.get(DcMotorEx.class, "TRM");
+        rightFront = hardwareMap.get(DcMotorEx.class, "BRM");
 
+        //////////////////////////////////
+        ////////////OUR STUFF////////////
+        RightSlide = hardwareMap.dcMotor.get("RSL");
+        LeftSlide = hardwareMap.dcMotor.get("LSL");
 
+        PullupBarExtender = hardwareMap.dcMotor.get("PBE");
+
+        PullupBarRotator = hardwareMap.dcMotor.get("PBR");
+        AirplaneLauncher = hardwareMap.crservo.get("ALR");
+        ClawWristOne = hardwareMap.crservo.get("CWO");
+        ClawFingerOne = hardwareMap.servo.get("CFO");
+        ClawWristTwo = hardwareMap.crservo.get("CWT");
+        ClawFingerTwo = hardwareMap.servo.get("CFT");
+
+        ///////////////////////////////////////
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 
@@ -126,8 +149,8 @@ public class SampleMecanumDrive extends MecanumDrive {
         }
 
         // TODO: reverse any motors using DcMotor.setDirection()
-        rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightRear.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
         List<Integer> lastTrackingEncPositions = new ArrayList<>();

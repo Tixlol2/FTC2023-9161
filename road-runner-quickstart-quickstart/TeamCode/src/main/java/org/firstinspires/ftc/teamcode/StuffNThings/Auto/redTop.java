@@ -4,17 +4,16 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.StuffNThings.RRPoses;
-import org.firstinspires.ftc.teamcode.StuffNThings.hardware;
-import org.firstinspires.ftc.teamcode.StuffNThings.opencvTest;
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
+import org.opencv.core.Point;
+import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
@@ -24,15 +23,15 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.StuffNThings.RRPoses;
+
 import java.util.ArrayList;
 import java.util.List;
 
-@Autonomous(name = "RedTop", group = "Auto")
+@Autonomous(name = "redTopGood",  group = "Auto")
+
 public class redTop extends LinearOpMode {
-
-    RRPoses poses = new RRPoses(0);
-
-    hardware r = new hardware();
 
     public double cX = 0;
     public double cY = 0;
@@ -40,108 +39,90 @@ public class redTop extends LinearOpMode {
     public int randInt = 0;
 
     public OpenCvCamera controlHubCam;  // Use OpenCvCamera class from FTC SDK
-    private static final int CAMERA_WIDTH = 640; // width  of wanted camera resolution
-    private static final int CAMERA_HEIGHT = 360; // height of wanted camera resolution
+    private static final int CAMERA_WIDTH = 800; // width  of wanted camera resolution
+    private static final int CAMERA_HEIGHT = 448; // height of wanted camera resolution
 
 
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode() throws InterruptedException{
 
         SampleMecanumDrive mecDrive = new SampleMecanumDrive(hardwareMap);
 
-        r.init_robot_noDrive(this);
-        for (DcMotor motor: r.all) {
-            motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            motor.setTargetPosition(0);
-            motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        }
-
-        r.clawServo.setPosition(.2);
-        r.outTakeS.setPosition(0);
 
 
-        initOpenCV(false);
+
+
+
+        initOpenCV(true);
         FtcDashboard dashboard = FtcDashboard.getInstance();
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
         FtcDashboard.getInstance().startCameraStream(controlHubCam, 30);
 
 
+
         while (!isStopRequested() && !isStarted()) {
             telemetry.addData("Coordinate", "(" + (int) cX + ", " + (int) cY + ")");
-            if (cX > 400) {
-                telemetry.addLine("Right");
-                randInt = 2;
-            } else if (cX > 200) {
-                telemetry.addLine("Middle");
-                randInt = 1;
-            } else telemetry.addLine("Left");
-            randInt = 0;
+            if (cX < 400) {telemetry.addLine("Left"); randInt = 0;}
+            else if (cX < 800) {telemetry.addLine("Middle"); randInt = 1;}
+            else telemetry.addLine("Right"); randInt = 2;
             telemetry.update();
+
+            // The OpenCV pipeline automatically processes frames and handles detection
         }
 
-        RRPoses poses = new RRPoses(randInt);
+        RRPoses r = new RRPoses(randInt);
 
+
+
+
+        TrajectorySequence traj1 = mecDrive.trajectorySequenceBuilder(r.redTop)
+                .lineToLinearHeading(r.redTopSpike)
+
+                .build();
+
+        // Release resources
         controlHubCam.stopStreaming();
 
-        TrajectorySequence traj1 = mecDrive.trajectorySequenceBuilder(poses.redBot)
-                .setReversed(true)
-                .splineToLinearHeading(poses.redTopSpike, Math.toRadians(0))
-                .addDisplacementMarker(() -> {
-                    r.inLeft.setTargetPosition(70);
-                    r.inRight.setTargetPosition(-70);
-
-                    while (r.inLeft.getCurrentPosition() < r.inLeft.getTargetPosition()-10) {
-                        r.inLeft.setPower(.5);
-                        r.inRight.setPower(.5);
-                    }
-                    r.inLeft.setPower(.0);
-                    r.inRight.setPower(.0);
-                    r.clawServo.setPosition(.6);
-                    sleep(2000);
-
-                    r.inLeft.setTargetPosition(0);
-                    r.inRight.setTargetPosition(
-                            0);
-
-                    while (r.inLeft.getCurrentPosition() > r.inLeft.getTargetPosition()+10) {
-                        r.inLeft.setPower(.5);
-                        r.inRight.setPower(.5);
-                    }
-                    r.inLeft.setPower(.0);
-                    r.inRight.setPower(.0);
-                    r.clawServo.setPosition(.3);
-
-                })
-                .setReversed(false)
-                .lineToLinearHeading(poses.redDrop)
-                .addDisplacementMarker(() -> {
-                            r.outMain.setTargetPosition(-4000);
-
-                            while (r.outMain.getCurrentPosition() > r.outMain.getTargetPosition() + 50) {
-                                r.outMain.setPower(.5);
-                            }
-                            r.outMain.setPower(.0);
-                            r.outTakeS.setPosition(1);
-                            sleep(2000);
-
-                            r.outMain.setTargetPosition(1);
-
-                            while (r.outMain.getCurrentPosition() < r.outMain.getTargetPosition() - 50) {
-                                r.outMain.setPower(.5);
-                            }
-                            r.outMain.setPower(.0);
-
-                            r.outTakeS.setPosition(0);
-                        })
-
-                        .build();
-
-
-        mecDrive.setPoseEstimate(poses.redBot);
+        mecDrive.setPoseEstimate(r.redBot);
         mecDrive.followTrajectorySequence(traj1);
 
 
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     public void initOpenCV(boolean blue) {
 
@@ -158,7 +139,7 @@ public class redTop extends LinearOpMode {
         controlHubCam.setPipeline(new YellowBlobDetectionPipeline(blue));
 
         controlHubCam.openCameraDevice();
-        controlHubCam.startStreaming(CAMERA_WIDTH, CAMERA_HEIGHT, OpenCvCameraRotation.UPRIGHT);
+        controlHubCam.startStreaming(CAMERA_WIDTH, CAMERA_HEIGHT, OpenCvCameraRotation.UPSIDE_DOWN);
     }
 
     class YellowBlobDetectionPipeline extends OpenCvPipeline {
@@ -209,8 +190,8 @@ public class redTop extends LinearOpMode {
 
             ///* BLUE
             if (blue) {
-                lowerYellow = new Scalar(0, 100, 100);
-                upperYellow = new Scalar(100, 255, 255);
+                lowerYellow = new Scalar(0, 70, 200);
+                upperYellow = new Scalar(90, 255, 255);
             }
             //*/
 
@@ -240,7 +221,4 @@ public class redTop extends LinearOpMode {
         }
 
     }
-
 }
-
-
