@@ -24,7 +24,7 @@ public class drive extends OpMode {
     public void init() {
         r.init_robot(this);
         r.ClawWristOne.setPower(0);
-        //r.ClawWristTwo.setPower(0);
+        r.ClawWristTwo.setPower(0);
 
     }
 
@@ -92,6 +92,8 @@ public class drive extends OpMode {
         telemetry.addLine(String.valueOf(r.TopRight.getCurrentPosition()));
         telemetry.addLine(String.valueOf(r.BottomLeft.getCurrentPosition()));
         telemetry.addLine(String.valueOf(r.BottomRight.getCurrentPosition()));
+        telemetry.addData("RightSidePos", r.RightLifter);
+        telemetry.addData("LeftSidePos", r.LeftLifter);
 //        double launcher_degrees = 0;
 
 //        double coaxialAngleTime = (41126.4 / (360 / angle)) / 360;
@@ -238,6 +240,8 @@ public class drive extends OpMode {
 //        }
 
 
+
+
 //
 //
         if (gamepad2.right_trigger == 1) {
@@ -261,8 +265,8 @@ public class drive extends OpMode {
             r.RightSlide.setPower(0.5);
             r.LeftSlide.setPower(-0.5);
         } else {
-            r.RightSlide.setPower(0);
-            r.LeftSlide.setPower(0);
+            r.RightSlide.setPower(.1);
+            r.LeftSlide.setPower(.1);
         }
 //        if (gamepad2.right_bumper) {
 //            r.RightLifter.setPower(-0.5);
@@ -274,6 +278,7 @@ public class drive extends OpMode {
 //            r.RightLifter.setPower(0);
 //            r.LeftLifter.setPower(0);
 //        }
+
     }
 }
 
