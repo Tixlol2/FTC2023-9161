@@ -52,14 +52,14 @@ public class redTop extends LinearOpMode {
 
 
 
-
-        initOpenCV(true);
+        //Open camera, true is here to signify if this is for the blue values or red values
+        initOpenCV(false);
         FtcDashboard dashboard = FtcDashboard.getInstance();
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
         FtcDashboard.getInstance().startCameraStream(controlHubCam, 30);
 
 
-
+        //During the init phase, check to see what pos the box is at
         while (!isStopRequested() && !isStarted()) {
             telemetry.addData("Coordinate", "(" + (int) cX + ", " + (int) cY + ")");
             if (cX < 400) {telemetry.addLine("Left"); randInt = 0;}
@@ -76,14 +76,53 @@ public class redTop extends LinearOpMode {
 
 
         TrajectorySequence traj1 = mecDrive.trajectorySequenceBuilder(r.redTop)
+                .setReversed(false)
+                //The random phase of the auton
                 .lineToLinearHeading(r.redTopSpike)
+                //Open + close left claw to drop on spike mark
+                .waitSeconds(3)
+                .addTemporalMarker(3,() -> {
+                            mecDrive.ClawFingerOne.setPosition(0);
+                })
+
+
+                //Move to backdrop
+                .lineToLinearHeading(r.redDrop)
+                //Move slides up, move claw wrist out, move forward a tiny bit, release clawfinger2, reset all motors (slides down claw closed)
+                /*.addDisplacementMarker(() -> {
+
+                    //Move slides upwards
+
+                    //Move claw wrist out (POWER VALUES MAY NEED TO CHANGE)
+                    mecDrive.ClawWristOne.setPower(.5);
+                    mecDrive.ClawWristTwo.setPower(-.5);
+
+
+                    //Move forward
+
+
+                    //Open ClawFingerTwo
+                    mecDrive.ClawFingerTwo.setPosition(1);
+
+                    mecDrive.ClawFingerTwo.setPosition(0);
+                    //Pull slides back down
+
+                })
+                .waitSeconds(2)
+                .addDisplacementMarker(() -> {
+                    mecDrive.ClawWristOne.setPower(.1);
+                    mecDrive.ClawWristTwo.setPower(0);
+
+                }) */
+                .lineToLinearHeading(r.redTopPark)
+
 
                 .build();
 
         // Release resources
         controlHubCam.stopStreaming();
 
-        mecDrive.setPoseEstimate(r.redBot);
+        mecDrive.setPoseEstimate(r.redTop);
         mecDrive.followTrajectorySequence(traj1);
 
 
